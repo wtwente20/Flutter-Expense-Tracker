@@ -4,7 +4,14 @@ import 'package:expense_tracker/widgets/new_expense.dart';
 import 'package:flutter/material.dart';
 
 class Expenses extends StatefulWidget {
-  const Expenses({super.key});
+  final ThemeMode themeMode;
+  final VoidCallback onThemeChanged;
+
+  const Expenses({
+    super.key,
+    required this.themeMode,
+    required this.onThemeChanged,
+  });
 
   @override
   State<Expenses> createState() {
@@ -74,6 +81,10 @@ class _ExpensesState extends State<Expenses> {
       appBar: AppBar(
         title: const Text('Flutter Expense Tracker'),
         actions: [
+          IconButton(
+            icon: Icon(widget.themeMode == ThemeMode.dark ? Icons.wb_sunny : Icons.nights_stay),
+            onPressed: widget.onThemeChanged,
+          ),
           IconButton(
             onPressed: _openAddExpenseOverlay,
             icon: Icon(Icons.add),
