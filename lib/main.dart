@@ -22,6 +22,13 @@ class ExpenseTracker extends StatefulWidget {
 class _ExpenseTrackerState extends State<ExpenseTracker> {
   ThemeMode _themeMode = ThemeMode.system;
 
+  @override
+  void initState() {
+    super.initState();
+    final Brightness brightness = WidgetsBinding.instance.window.platformBrightness;
+    _themeMode = brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light;
+  }
+  
   void _switchTheme() {
     setState(() {
       // switch between light and dark theme
