@@ -2,7 +2,7 @@ import 'package:expense_tracker/widgets/expenses.dart';
 import 'package:flutter/material.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(255, 96, 59, 181),
+  seedColor: Color.fromARGB(255, 10, 40, 175),
 );
 
 var kDarkColorScheme = ColorScheme.fromSeed(
@@ -47,8 +47,8 @@ class _ExpenseTrackerState extends State<ExpenseTracker> {
         useMaterial3: true,
         colorScheme: kDarkColorScheme,
         appBarTheme: const AppBarTheme().copyWith(
-          backgroundColor: kDarkColorScheme.onPrimaryContainer,
-          foregroundColor: kDarkColorScheme.primaryContainer,
+          backgroundColor: kDarkColorScheme.outlineVariant,
+          foregroundColor: kDarkColorScheme.onSurface,
         ),
         cardTheme: const CardTheme().copyWith(
           color: kDarkColorScheme.secondaryContainer,
@@ -74,6 +74,7 @@ class _ExpenseTrackerState extends State<ExpenseTracker> {
       theme: ThemeData().copyWith(
         useMaterial3: true,
         colorScheme: kColorScheme,
+        scaffoldBackgroundColor: kColorScheme.inversePrimary,
         appBarTheme: const AppBarTheme().copyWith(
           backgroundColor: kColorScheme.onPrimaryContainer,
           foregroundColor: kColorScheme.primaryContainer,
