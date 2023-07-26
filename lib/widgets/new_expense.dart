@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/models/expense.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -36,11 +39,25 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
-  void _submitExpenseData() {
-    final enteredAmount = double.tryParse(_amountController.text);
-    final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
-    if (_titleController.text.trim().isEmpty || amountIsInvalid) {
+  void _showDialog() {
+    if (Platform.isIOS) {
+      showCupertinoDialog(
+          context: context,
+          builder: (ctx) => CupertinoAlertDialog(
+                title: const Text('Invalid input'),
+                content: const Text(
+                    'Please make sure a valid title, amount, date and category have been entered.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                    },
+                    child: const Text('Okay'),
+                  )
+                ],
+              ));
       // show error message
+    } else {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -57,6 +74,16 @@ class _NewExpenseState extends State<NewExpense> {
           ],
         ),
       );
+    }
+  }
+
+  void _submitExpenseData() {
+    final enteredAmount = double.tryParse(_amountController.text);
+    final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
+    if (_titleController.text.trim().isEmpty ||
+        amountIsInvalid ||
+        _selectedDate == null) {
+      _showDialog();
       return;
     }
     widget.onAddExpense(
@@ -150,27 +177,27 @@ class _NewExpenseState extends State<NewExpense> {
                     ),
                     const SizedBox(width: 24),
                     Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              _selectedDate == null
-                                  ? 'No date selected'
-                                  : formatter.format(_selectedDate!),
-                              style: TextStyle(
-                                color: kDarkColorScheme.onSecondaryContainer,
-                              ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            _selectedDate == null
+                                ? 'No date selected'
+                                : formatter.format(_selectedDate!),
+                            style: TextStyle(
+                              color: kDarkColorScheme.onSecondaryContainer,
                             ),
-                            IconButton(
-                              onPressed: _presentDatePicker,
-                              icon: const Icon(
-                                Icons.calendar_month,
-                              ),
+                          ),
+                          IconButton(
+                            onPressed: _presentDatePicker,
+                            icon: const Icon(
+                              Icons.calendar_month,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
                   ])
                 else
                   Row(
@@ -216,7 +243,7 @@ class _NewExpenseState extends State<NewExpense> {
                 const SizedBox(
                   height: 16,
                 ),
-                if(width >= 600)
+                if (width >= 600)
                   Row(children: [
                     const Spacer(),
                     TextButton(
@@ -232,45 +259,46 @@ class _NewExpenseState extends State<NewExpense> {
                   ])
                 else
                   Row(
-                  children: [
-                    DropdownButton<Category>(
-                      // Provide the generic type for DropdownButton
-                      value: _selectedCategory,
-                      items: Category.values
-                          .map(
-                            (category) => DropdownMenuItem(
-                              value: category,
-                              child: Text(
-                                category.name.toUpperCase(),
-                                style: TextStyle(
-                                  color: kDarkColorScheme.onSecondaryContainer,
+                    children: [
+                      DropdownButton<Category>(
+                        // Provide the generic type for DropdownButton
+                        value: _selectedCategory,
+                        items: Category.values
+                            .map(
+                              (category) => DropdownMenuItem(
+                                value: category,
+                                child: Text(
+                                  category.name.toUpperCase(),
+                                  style: TextStyle(
+                                    color:
+                                        kDarkColorScheme.onSecondaryContainer,
+                                  ),
                                 ),
                               ),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        if (value == null) {
-                          return;
-                        }
-                        setState(() {
-                          _selectedCategory = value;
-                        });
-                      },
-                    ),
-                    Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Cancel'),
-                    ),
-                    ElevatedButton(
-                      onPressed: _submitExpenseData,
-                      child: const Text('Save Expense'),
-                    ),
-                  ],
-                ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          if (value == null) {
+                            return;
+                          }
+                          setState(() {
+                            _selectedCategory = value;
+                          });
+                        },
+                      ),
+                      Spacer(),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _submitExpenseData,
+                        child: const Text('Save Expense'),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
